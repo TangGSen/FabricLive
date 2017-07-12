@@ -7,8 +7,7 @@ import android.view.SurfaceHolder;
 import android.view.SurfaceView;
 import android.view.View;
 import android.widget.Button;
-
-
+import android.widget.EditText;
 
 
 public class MainActivity extends AppCompatActivity implements SurfaceHolder.Callback2 {
@@ -17,6 +16,7 @@ public class MainActivity extends AppCompatActivity implements SurfaceHolder.Cal
 
     private Button btnToggle;
     private SurfaceView mSurfaceView;
+    private EditText etUrl;
 
     private SurfaceHolder mSurfaceHolder;
     private boolean isPublished;
@@ -27,6 +27,7 @@ public class MainActivity extends AppCompatActivity implements SurfaceHolder.Cal
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+        etUrl = (EditText)findViewById(R.id.rtmpUrl);
         Log.i(TAG, "onCreate: ");
         initView();
         mMediaPublisher = MediaPublisher
@@ -34,8 +35,9 @@ public class MainActivity extends AppCompatActivity implements SurfaceHolder.Cal
                         .setFps(30) // fps
                         .setMaxWidth(720) //视频的最大宽度
                         .setMinWidth(320) //视频的最小宽度
-                        .setUrl("rtmp://192.168.155.1:1935/live/test")//推送的url
+                        .setUrl(etUrl.getText().toString())//推送的url
                         .build());
+
         mMediaPublisher.init();
     }
 

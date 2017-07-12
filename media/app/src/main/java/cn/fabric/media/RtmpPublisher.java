@@ -16,10 +16,17 @@ public class RtmpPublisher {
     private RtmpPublisher(){}
 
     public int init(String url, int w, int h, int timeOut) {
-        cPtr = MediaJni.init(url, w, h, timeOut);
-        if (cPtr != 0) {
-            return 0;
+        try {
+            cPtr = MediaJni.init(url, w, h, timeOut);
+            if (cPtr != 0) {
+                return 0;
+            }
+        }catch (Exception e)
+        {
+            e.printStackTrace();
         }
+
+
         return -1;
     }
 
