@@ -6,7 +6,7 @@ package cn.fabric.media;
 
 public final class MediaJni {
     static {
-        System.loadLibrary("media-native");
+        System.loadLibrary("media-lib");
     }
 
     static native long init(String url, int w, int h, int timeOut);

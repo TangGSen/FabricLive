@@ -11,7 +11,7 @@ cmake_minimum_required(VERSION 3.4.1)
 include_directories(${CMAKE_SOURCE_DIR}/src/main/cpp/include)
 
 add_library( # Sets the name of the library.
-             media-native
+             media-lib
 
              # Sets the library as a shared library.
              SHARED
@@ -44,7 +44,7 @@ set_target_properties(rtmp PROPERTIES IMPORTED_LOCATION
                       ${CMAKE_SOURCE_DIR}/libs/${ANDROID_ABI}/librtmp.so)
 
 target_link_libraries( # Specifies the target library.
-                       media-native
+                       media-lib
 
                        # Links the target library to the log library
                        # included in the NDK.
