@@ -12,7 +12,6 @@ import java.util.concurrent.LinkedBlockingQueue;
 
 
 /**
- * Created by blueberry on 3/7/2017.
  * 发送数据。
  */
 

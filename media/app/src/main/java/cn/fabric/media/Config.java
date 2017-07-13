@@ -3,7 +3,6 @@ package cn.fabric.media;
 import android.media.AudioFormat;
 
 /**
- * Created by blueberry on 4/28/2017.
  */
 
 public class Config {

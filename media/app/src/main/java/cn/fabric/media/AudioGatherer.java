@@ -6,7 +6,6 @@ import android.media.MediaRecorder;
 import android.util.Log;
 
 /**
- * Created by blueberry on 3/6/2017.
  * <p>
  * 音频采集
  */

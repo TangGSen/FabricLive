@@ -17,9 +17,7 @@ import static android.hardware.Camera.Parameters.FOCUS_MODE_AUTO;
 import static android.hardware.Camera.Parameters.PREVIEW_FPS_MAX_INDEX;
 import static android.hardware.Camera.Parameters.PREVIEW_FPS_MIN_INDEX;
 
-/**
- * Created by blueberry on 3/6/2017.
- */
+
 
 public class VideoGatherer {
     private static final String TAG = "VideoGatherer";
