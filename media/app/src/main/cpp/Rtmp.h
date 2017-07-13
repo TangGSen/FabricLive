@@ -15,9 +15,9 @@
 extern "C" {
 #endif
 // include c header
-#include "include/librtmp/rtmp.h"
-#include "include/librtmp/rtmp_sys.h"
-#include "include/librtmp/log.h"
+#include "librtmp/rtmp.h"
+#include "librtmp/rtmp_sys.h"
+#include "librtmp/log.h"
 #include "android/log.h"
 #include "time.h"
 

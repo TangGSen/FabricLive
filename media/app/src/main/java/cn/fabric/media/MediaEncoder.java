@@ -20,6 +20,7 @@ import static android.media.MediaFormat.KEY_MAX_INPUT_SIZE;
 
 
 /**
+ * Created by blueberry on 3/6/2017.
  * <p>
  * 封装音视频解码，对视频进行AVC编码、对音频进行AAC编码。
  */
