@@ -240,8 +240,8 @@ public class VideoGatherer {
         }
 
         parameters.setPreviewSize(previewSize.width, previewSize.height);
-//        parameters.setPreviewFpsRange(destRange[PREVIEW_FPS_MIN_INDEX],
-//                destRange[PREVIEW_FPS_MAX_INDEX]);
+        parameters.setPreviewFpsRange(destRange[PREVIEW_FPS_MIN_INDEX],
+                destRange[PREVIEW_FPS_MAX_INDEX]);
 
         List<String> supportedFocusModes = parameters.getSupportedFocusModes();
         for (int i = 0; null != supportedFocusModes && i < supportedFocusModes.size(); i++) {
