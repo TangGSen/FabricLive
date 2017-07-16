@@ -70,7 +70,8 @@ public class Config {
         private int audioFormat = AudioFormat.ENCODING_PCM_16BIT;
         private int audioChannel = AudioFormat.CHANNEL_CONFIGURATION_STEREO;
 
-        private int bitrate = 700 * 1000;
+        //private int bitrate = 700 * 1000 ;
+        private int bitrate = 1200 * 1024;
 
         public Builder() {
             fps = 30;
