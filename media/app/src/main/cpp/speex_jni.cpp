@@ -19,7 +19,7 @@ void *dec_state;
 static JavaVM *gJavaVM;
 
 extern "C"
-JNIEXPORT jint JNICALL Java_cn_fabric_media_Speex_open
+JNIEXPORT jint JNICALL Java_cn_fabric_media_jni_SpeexJni_open
   (JNIEnv *env, jobject obj, jint compression) {
 	int tmp;
 
@@ -40,7 +40,7 @@ JNIEXPORT jint JNICALL Java_cn_fabric_media_Speex_open
 }
 
 extern "C"
-JNIEXPORT jint Java_cn_fabric_media_Speex_encode
+JNIEXPORT jint Java_cn_fabric_media_jni_SpeexJni_encode
     (JNIEnv *env, jobject obj, jshortArray lin, jint offset, jbyteArray encoded, jint size) {
 
         jshort buffer[enc_frame_size];
@@ -69,7 +69,7 @@ JNIEXPORT jint Java_cn_fabric_media_Speex_encode
 }
 
 extern "C"
-JNIEXPORT jint JNICALL Java_cn_fabric_media_Speex_decode
+JNIEXPORT jint JNICALL Java_cn_fabric_media_jni_SpeexJni_decode
     (JNIEnv *env, jobject obj, jbyteArray encoded, jshortArray lin, jint size) {
 
         jbyte buffer[dec_frame_size];
@@ -89,7 +89,7 @@ JNIEXPORT jint JNICALL Java_cn_fabric_media_Speex_decode
 }
 
 extern "C"
-JNIEXPORT jint JNICALL Java_cn_fabric_media_Speex_getFrameSize
+JNIEXPORT jint JNICALL Java_cn_fabric_media_jni_SpeexJni_getFrameSize
     (JNIEnv *env, jobject obj) {
 
 	if (!codec_open)
@@ -99,7 +99,7 @@ JNIEXPORT jint JNICALL Java_cn_fabric_media_Speex_getFrameSize
 }
 
 extern "C"
-JNIEXPORT void JNICALL Java_cn_fabric_media_Speex_close
+JNIEXPORT void JNICALL Java_cn_fabric_media_jni_SpeexJni_close
     (JNIEnv *env, jobject obj) {
 
 	if (--codec_open != 0)

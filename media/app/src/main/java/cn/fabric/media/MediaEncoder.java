@@ -113,7 +113,7 @@ public class MediaEncoder {
         int colorFormat = getColorFormat(mediaCodecInfo);
         MediaCodec vencoder = MediaCodec.createByCodecName(mediaCodecInfo.getName());
         MediaFormat format = MediaFormat.createVideoFormat(MediaFormat.MIMETYPE_VIDEO_AVC,
-                width, height);
+                height,width );
         format.setInteger(KEY_MAX_INPUT_SIZE, 0);
         format.setInteger(KEY_BIT_RATE, mConfig.bitrate);
         format.setInteger(KEY_COLOR_FORMAT, colorFormat);

@@ -60,34 +60,73 @@ public class Yuv420Util {
         }
     }
 
+    public static void Nv21ToYuv420SPAnd_Rotate(byte[] data, byte[] dstData, int w, int h,int nw,int nh) {
+        int deleteW = (nw - w) / 2;
+        int deleteH = (nh - h) / 2;
+        //处理y 旋转加裁剪
+        int i, j;
+        int index = w * h;
+        for (j = deleteH; j < nh- deleteH; j++) {
+            for (i = deleteW; i < nw- deleteW; i++)
+                dstData[--index]= data[j * nw + i];
+        }
+
+        //处理u
+        index= w * h * 5 / 4;
+
+        for (i = nh + deleteH / 2;i < nh / 2 * 3 - deleteH / 2; i++)
+            for (j = deleteW + 1; j< nw - deleteW; j += 2)
+                dstData[--index]= data[i * nw + j];
+
+        //处理v 旋转裁剪加格式转换
+        index= w * h * 3 / 2;
+        for (i = nh + deleteH / 2;i < nh / 2 * 3 - deleteH / 2; i++)
+            for (j = deleteW; j < nw- deleteW; j += 2)
+                dstData[--index]= data[i * nw + j];
+    }
+
     /**
      * 翻转90度
      * @param src
-     * @param des
-     * @param width
+     * @param dst
+     * @param srcWidth
      * @param height
      */
-    public static void Yuv420SPRotate_90(byte[] src, byte[] des, int width, int height)
+    public static void Yuv420SPRotate_90(byte[] src, byte[] dst,int srcWidth,int height)
     {
-        int wh = width * height;
+        int nWidth = 0, nHeight = 0;
+        int wh = 0;
+        int uvHeight = 0;
+        if(srcWidth != nWidth || height != nHeight)
+        {
+            nWidth = srcWidth;
+            nHeight = height;
+            wh = srcWidth * height;
+            uvHeight = height >> 1;//uvHeight = height / 2
+        }
+
         //旋转Y
         int k = 0;
-        for(int i=0;i<width;i++) {
-            for(int j=0;j<height;j++)
+        for(int i = 0; i < srcWidth; i++){
+            int nPos = srcWidth - 1;
+            for(int j = 0; j < height; j++)
             {
-                des[k] = src[width*j + i];
+                dst[k] = src[nPos - i];
                 k++;
+                nPos += srcWidth;
             }
         }
 
-        for(int i=0;i<width/2;i++) {
-            for(int j=0;j<height/2;j++)
-            {
-                des[k] = src[wh+ width/2*j + i];
-                des[k+width*height/4]=src[wh*5/4 + width/2*j + i];
-                k++;
+        for(int i = 0; i < srcWidth; i+=2){
+            int nPos = wh + srcWidth - 1;
+            for(int j = 0; j < uvHeight; j++) {
+                dst[k] = src[nPos - i - 1];
+                dst[k + 1] = src[nPos - i];
+                k += 2;
+                nPos += srcWidth;
             }
         }
+
 
     }
 

@@ -7,7 +7,7 @@ package cn.fabric.media;
 public final class MediaJni {
     static {
         System.loadLibrary("rtmp");
-        System.loadLibrary("media-native");
+        System.loadLibrary("fabric-lib");
 
     }
 

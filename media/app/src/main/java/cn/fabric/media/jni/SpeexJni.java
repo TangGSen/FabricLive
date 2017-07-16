@@ -1,6 +1,6 @@
-package cn.fabric.media;
+package cn.fabric.media.jni;
 
-class Speex  {
+class SpeexJni {
 
 	/* quality
 	 * 1 : 4kbps (very noticeable artifacts, usually intelligible)
@@ -11,7 +11,7 @@ class Speex  {
 	 */
 	private static final int DEFAULT_COMPRESSION = 8;
 
-	Speex() {
+	SpeexJni() {
 	}
 
 	public void init() {
@@ -22,6 +22,7 @@ class Speex  {
 	private void load() {
 		try {
 			System.loadLibrary("speex");
+			System.loadLibrary("speex-lib");
 		} catch (Throwable e) {
 			e.printStackTrace();
 		}

@@ -111,7 +111,6 @@ public class VideoGatherer {
             private long preTime;
             //YUV420
             byte[] dstByte = new byte[calculateFrameSize(ImageFormat.NV21)];
-            byte[] rotationByte = new byte[calculateFrameSize(ImageFormat.NV21)];
 
             @Override
             public void run() {
@@ -120,7 +119,9 @@ public class VideoGatherer {
                         PixelData pixelData = mQueue.take();
                         // 处理
                         if (colorFormat == MediaCodecInfo.CodecCapabilities.COLOR_FormatYUV420SemiPlanar) {
+
                             Yuv420Util.Nv21ToYuv420SP(pixelData.data, dstByte, previewSize.width, previewSize.height);
+                            //Yuv420Util.Nv21ToYuv420SPAnd_Rotate(pixelData.data, dstByte, previewSize.width, previewSize.height,previewSize.height,previewSize.width);
                             Log.i(TAG,"Nv21ToYuv420SP=========");
                         } else if (colorFormat == MediaCodecInfo.CodecCapabilities.COLOR_FormatYUV420Planar) {
                             Yuv420Util.Nv21ToI420(pixelData.data, dstByte, previewSize.width, previewSize.height);
@@ -140,10 +141,12 @@ public class VideoGatherer {
                             System.arraycopy(pixelData.data, 0, dstByte, 0, pixelData.data.length);
                         }
 
-                        //Yuv420Util.Yuv420SPRotate_90(dstByte,rotationByte,previewSize.width, previewSize.height);
+                        byte[] rotateByte = new byte[calculateFrameSize(ImageFormat.NV21)];
+
+                        Yuv420Util.Yuv420SPRotate_90(dstByte,rotateByte,previewSize.width,previewSize.height);
 
                         if (mCallback != null) {
-                            mCallback.onReceive(dstByte, colorFormat);
+                            mCallback.onReceive(rotateByte, colorFormat);
                         }
                         //处理完成之后调用 addCallbackBuffer()
                         if (preTime != 0) {
