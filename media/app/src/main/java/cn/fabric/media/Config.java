@@ -70,8 +70,13 @@ public class Config {
         private int audioFormat = AudioFormat.ENCODING_PCM_16BIT;
         private int audioChannel = AudioFormat.CHANNEL_CONFIGURATION_STEREO;
 
-        //private int bitrate = 700 * 1000 ;
-        private int bitrate = 1200 * 1024;
+        private int SmoothBitrate = 500 * 1024; //500k
+        private int HdBitrate = 1200 * 1024; //1200k
+
+        private int bitrate = SmoothBitrate ;
+
+
+
 
         public Builder() {
             fps = 30;
@@ -153,6 +158,26 @@ public class Config {
             this.bitrate = bitrate;
             return this;
         }
+
+        /**
+         * 设置高清编码比特率。
+         *
+         */
+        public Builder setHdBitrate() {
+            this.bitrate = HdBitrate;
+            return this;
+        }
+
+        /**
+         * 设置标清编码比特率。
+
+         */
+        public Builder setSmoothBitrate() {
+            this.bitrate = SmoothBitrate;
+            return this;
+        }
+
+
 
         /**
          * 建造Config

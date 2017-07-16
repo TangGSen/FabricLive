@@ -8,6 +8,8 @@ import android.view.SurfaceView;
 import android.view.View;
 import android.widget.Button;
 
+import cn.fabric.media.camera.BitRateModeType;
+
 
 public class MainActivity extends AppCompatActivity implements SurfaceHolder.Callback2 {
 
@@ -22,6 +24,7 @@ public class MainActivity extends AppCompatActivity implements SurfaceHolder.Cal
 
     private int cameraId;
     private String rtmpUrl;
+    private int mode;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -32,14 +35,22 @@ public class MainActivity extends AppCompatActivity implements SurfaceHolder.Cal
         Bundle bundle = this.getIntent().getExtras();
         rtmpUrl = bundle.getString("rtmpUrl");
         cameraId = bundle.getInt("cameraId");
+        mode = bundle.getInt("mode");
+
         Log.i(TAG,"rtmpUrl:"+rtmpUrl);
-        mMediaPublisher = MediaPublisher
-                .newInstance(new Config.Builder()
-                        .setFps(30) // fps
-                        .setMaxWidth(720) //视频的最大宽度
-                        .setMinWidth(320) //视频的最小宽度
-                        .setUrl(rtmpUrl)//推送的url
-                        .build());
+        Config.Builder builder = new Config.Builder()
+                .setFps(30) // fps
+                .setMaxWidth(720) //视频的最大宽度
+                .setMinWidth(320) //视频的最小宽度
+                .setUrl(rtmpUrl);//推送的url
+        if(mode == BitRateModeType.HDMode.getValue())
+        {
+            builder.setHdBitrate();
+        }else
+        {
+            builder.setSmoothBitrate();
+        }
+        mMediaPublisher = MediaPublisher.newInstance(builder.build());
         mMediaPublisher.init();
         start();
     }

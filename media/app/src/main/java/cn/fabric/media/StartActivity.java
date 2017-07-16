@@ -9,8 +9,11 @@ import android.support.v7.app.AppCompatActivity;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.RadioButton;
+import android.widget.RadioGroup;
 import android.widget.Toast;
 
+import cn.fabric.media.camera.BitRateModeType;
 import cn.fabric.media.camera.CameraType;
 
 public class StartActivity extends AppCompatActivity {
@@ -28,45 +31,56 @@ public class StartActivity extends AppCompatActivity {
      */
     private EditText rtmpUrl;
 
+    /**
+     * 清晰模式
+     */
+    private RadioGroup radioGroupMode;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(cn.fabric.media.R.layout.activity_start);
         initView();
         final Intent intent = new Intent(StartActivity.this,MainActivity.class);
-        final Bundle bundle=new Bundle();
 
         btnPreCamera.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                String url = rtmpUrl.getText().toString();
-
-                if(validateUrl(url))
-                {
-                    bundle.putString("rtmpUrl",url);
-                    bundle.putInt("cameraId", CameraType.PRE_CAMERA.getValue());
-                    intent.putExtras(bundle);
-                    startActivity(intent);
-                }
-
+                startIntent(intent,CameraType.PRE_CAMERA.getValue());
             }
         });
 
         btnAfterCamera.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                String url = rtmpUrl.getText().toString();
-
-                if(validateUrl(url))
-                {
-                    bundle.putString("rtmpUrl",url);
-                    bundle.putInt("cameraId", CameraType.AFTER_CAMERA.getValue());
-                    intent.putExtras(bundle);
-                    startActivity(intent);
-                }
+                startIntent(intent,CameraType.AFTER_CAMERA.getValue());
             }
         });
 
+    }
+
+    private void startIntent(Intent intent,int cameraType)
+    {
+        Bundle bundle=new Bundle();
+        String url = rtmpUrl.getText().toString();
+        RadioButton radioButton = (RadioButton)findViewById(radioGroupMode.getCheckedRadioButtonId());
+        String mode = radioButton.getText().toString();
+
+
+        if(validateUrl(url))
+        {
+            bundle.putString("rtmpUrl",url);
+            bundle.putInt("cameraId", cameraType);
+            if (mode.equals("高清")){
+                bundle.putInt("mode", BitRateModeType.HDMode.getValue());
+            }else
+            {
+                bundle.putInt("mode", BitRateModeType.SmoothMode.getValue());
+            }
+            intent.putExtras(bundle);
+            startActivity(intent);
+
+        }
     }
 
     private boolean validateUrl(String url)
@@ -86,6 +100,7 @@ public class StartActivity extends AppCompatActivity {
         btnPreCamera = (Button)findViewById(R.id.btnPreCamera);
         btnAfterCamera = (Button)findViewById(R.id.btnAfterCamera);
         rtmpUrl = (EditText)findViewById(R.id.rtmpUrl);
+        radioGroupMode = (RadioGroup)findViewById(R.id.radioGroupMode);
     }
 
 }
