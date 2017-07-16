@@ -97,8 +97,8 @@ public class MediaPublisher {
      * @param act
      * @param holder
      */
-    public void initVideoGatherer(Activity act, SurfaceHolder holder) {
-        videoParams = mVideoGatherer.initCamera(act, holder);
+    public void initVideoGatherer(Activity act, SurfaceHolder holder,int cameraType) {
+        videoParams = mVideoGatherer.initCamera(act, holder,cameraType);
     }
 
     /**

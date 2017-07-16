@@ -60,4 +60,36 @@ public class Yuv420Util {
         }
     }
 
+    /**
+     * 翻转90度
+     * @param src
+     * @param des
+     * @param width
+     * @param height
+     */
+    public static void Yuv420SPRotate_90(byte[] src, byte[] des, int width, int height)
+    {
+        int wh = width * height;
+        //旋转Y
+        int k = 0;
+        for(int i=0;i<width;i++) {
+            for(int j=0;j<height;j++)
+            {
+                des[k] = src[width*j + i];
+                k++;
+            }
+        }
+
+        for(int i=0;i<width/2;i++) {
+            for(int j=0;j<height/2;j++)
+            {
+                des[k] = src[wh+ width/2*j + i];
+                des[k+width*height/4]=src[wh*5/4 + width/2*j + i];
+                k++;
+            }
+        }
+
+    }
+
+
 }

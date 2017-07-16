@@ -15,10 +15,10 @@ class Speex  {
 	}
 
 	public void init() {
-		load();	
+		load();
 		open(DEFAULT_COMPRESSION);
 	}
-	
+
 	private void load() {
 		try {
 			System.loadLibrary("speex");

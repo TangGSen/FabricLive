@@ -1,9 +1,12 @@
 package cn.fabric.media;
 
 import android.media.AudioFormat;
+import android.media.AudioManager;
 import android.media.AudioRecord;
 import android.media.MediaRecorder;
+import android.media.audiofx.AcousticEchoCanceler;
 import android.util.Log;
+import android.widget.Toast;
 
 /**
  * Created by blueberry on 3/6/2017.
@@ -22,8 +25,11 @@ public class AudioGatherer {
     private Thread workThread;
     private boolean loop;
     private Callback mCallback;
+    AcousticEchoCanceler aecSwith;
+
 
     public static AudioGatherer newInstance(Config config) {
+
         return new AudioGatherer(config);
 
     }
@@ -45,9 +51,8 @@ public class AudioGatherer {
      * 初始化录音
      */
     public Params initAudioDevice() {
-        int[] sampleRates = {44100, 22050, 16000, 11025};
-        for (int sampleRate :
-                sampleRates) {
+        int[] sampleRates = {44100};
+        for (int sampleRate :  sampleRates) {
             //编码制式
             int audioFormat = mConfig.audioFormat;
             // stereo 立体声，
@@ -68,13 +73,47 @@ public class AudioGatherer {
     }
 
     /**
+     * 初始化语言消除
+     * @param audioSession
+     */
+    public void initAEC( int audioSession){
+        if(AcousticEchoCanceler.isAvailable())
+        {
+            Log.i(TAG,"不能做回音消除===========");
+            return ;
+        }else
+        {
+            Log.i(TAG,"支持回音消除==========="+audioSession);
+        }
+        if(aecSwith != null)
+        {
+            return ;
+        }
+        aecSwith = AcousticEchoCanceler.create(audioSession);
+        if(aecSwith!=null)
+        {
+            Log.i(TAG,"创建成果了哦===========");
+            aecSwith.setEnabled(true);
+        }else
+        {
+            Log.i(TAG,"创建失败了哦===========");
+        }
+
+    }
+
+    /**
      * 开始录音
      */
     public void start() {
         workThread = new Thread() {
             @Override
             public void run() {
+
                 mAudioRecord.startRecording();
+                int sessionId = mAudioRecord.getAudioSessionId();
+
+                Log.i(TAG,"sessionId = "+sessionId);
+                initAEC(sessionId);
                 while (loop && !Thread.interrupted()) {
                     int size = mAudioRecord.read(buffer, 0, buffer.length);
                     if (size < 0) {
@@ -82,8 +121,12 @@ public class AudioGatherer {
                         break;
                     }
                     if (loop) {
+
+
+
                         byte[] audio = new byte[size];
                         System.arraycopy(buffer, 0, audio, 0, size);
+
                         if (mCallback != null) {
                             mCallback.audioData(audio);
                         }
@@ -104,8 +147,15 @@ public class AudioGatherer {
         mAudioRecord.stop();
     }
 
+
     public void release() {
+
         mAudioRecord.release();
+        if( null != aecSwith){
+            aecSwith.setEnabled(false);
+            aecSwith.release();
+        }
+
     }
 
     public void setCallback(Callback callback) {

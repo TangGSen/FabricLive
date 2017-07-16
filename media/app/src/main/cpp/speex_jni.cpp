@@ -4,6 +4,8 @@
 #include <unistd.h>
 
 #include <speex/speex.h>
+#include <speex/speex_echo.h>
+#include <speex/speex_preprocess.h>
 
 static int codec_open = 0;
 

@@ -7,63 +7,57 @@ import android.view.SurfaceHolder;
 import android.view.SurfaceView;
 import android.view.View;
 import android.widget.Button;
-import android.widget.EditText;
 
 
 public class MainActivity extends AppCompatActivity implements SurfaceHolder.Callback2 {
 
     private static final String TAG = "MainActivity";
 
-    private Button btnToggle;
     private SurfaceView mSurfaceView;
-    private EditText rtmpUrl;
 
     private SurfaceHolder mSurfaceHolder;
     private boolean isPublished;
 
     private MediaPublisher mMediaPublisher;
 
+    private int cameraId;
+    private String rtmpUrl;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_main);
+        setContentView(cn.fabric.media.R.layout.activity_main);
         Log.i(TAG, "onCreate: ");
         initView();
+
+        Bundle bundle = this.getIntent().getExtras();
+        rtmpUrl = bundle.getString("rtmpUrl");
+        cameraId = bundle.getInt("cameraId");
+        Log.i(TAG,"rtmpUrl:"+rtmpUrl);
         mMediaPublisher = MediaPublisher
                 .newInstance(new Config.Builder()
                         .setFps(30) // fps
                         .setMaxWidth(720) //视频的最大宽度
                         .setMinWidth(320) //视频的最小宽度
-                        .setUrl(rtmpUrl.getText().toString())//推送的url
+                        .setUrl(rtmpUrl)//推送的url
                         .build());
         mMediaPublisher.init();
+        start();
     }
 
     private void initView() {
-        btnToggle = (Button) findViewById(R.id.btn_toggle);
-        mSurfaceView = (SurfaceView) findViewById(R.id.surface_view);
-        rtmpUrl = (EditText)findViewById(R.id.rtmpUrl);
+        mSurfaceView = (SurfaceView) findViewById(cn.fabric.media.R.id.surface_view);
         mSurfaceView.setKeepScreenOn(true);
         mSurfaceHolder = mSurfaceView.getHolder();
         mSurfaceHolder.addCallback(this);
-        btnToggle.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                switchPublish();
-            }
-        });
+
+
     }
 
-    private void switchPublish() {
-        if (isPublished) {
-            stop();
-        } else {
-            start();
-        }
-        btnToggle.setText(isPublished ? "停止" : "开始");
-    }
+
 
     private void start() {
+
+        mMediaPublisher.initVideoGatherer(this, mSurfaceHolder,cameraId);
         //初始化声音采集
         mMediaPublisher.initAudioGatherer();
         //初始化编码器
@@ -81,7 +75,8 @@ public class MainActivity extends AppCompatActivity implements SurfaceHolder.Cal
     protected void onResume() {
         super.onResume();
         Log.i(TAG, "onResume: ");
-        mMediaPublisher.initVideoGatherer(this, mSurfaceHolder);
+        mMediaPublisher.initVideoGatherer(this, mSurfaceHolder,cameraId);
+
 
     }
 
@@ -118,7 +113,7 @@ public class MainActivity extends AppCompatActivity implements SurfaceHolder.Cal
     @Override
     public void surfaceChanged(SurfaceHolder holder, int format, int width, int height) {
         Log.i(TAG, "surfaceChanged: ");
-        mMediaPublisher.initVideoGatherer(MainActivity.this, holder);
+        mMediaPublisher.initVideoGatherer(MainActivity.this, holder,cameraId);
     }
 
     @Override

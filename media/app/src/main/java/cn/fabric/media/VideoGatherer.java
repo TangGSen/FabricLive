@@ -82,13 +82,13 @@ public class VideoGatherer {
     /**
      * 初始化Camera
      */
-    public Params initCamera(Activity act, SurfaceHolder holder) {
+    public Params initCamera(Activity act, SurfaceHolder holder,int cameraType) {
         // first release
         release();
 
-        openCamera();
+        openCamera(cameraType);
         setCameraParameters();
-        setCameraDisplayOrientation(act, Camera.CameraInfo.CAMERA_FACING_BACK, mCamera);
+        setCameraDisplayOrientation(act, Camera.CameraInfo.CAMERA_FACING_FRONT, mCamera);
         try {
             mCamera.setPreviewDisplay(holder);
         } catch (IOException e) {
@@ -111,6 +111,7 @@ public class VideoGatherer {
             private long preTime;
             //YUV420
             byte[] dstByte = new byte[calculateFrameSize(ImageFormat.NV21)];
+            byte[] rotationByte = new byte[calculateFrameSize(ImageFormat.NV21)];
 
             @Override
             public void run() {
@@ -120,8 +121,10 @@ public class VideoGatherer {
                         // 处理
                         if (colorFormat == MediaCodecInfo.CodecCapabilities.COLOR_FormatYUV420SemiPlanar) {
                             Yuv420Util.Nv21ToYuv420SP(pixelData.data, dstByte, previewSize.width, previewSize.height);
+                            Log.i(TAG,"Nv21ToYuv420SP=========");
                         } else if (colorFormat == MediaCodecInfo.CodecCapabilities.COLOR_FormatYUV420Planar) {
                             Yuv420Util.Nv21ToI420(pixelData.data, dstByte, previewSize.width, previewSize.height);
+                            Log.i(TAG,"Nv21ToI420=========");
                         } else if (colorFormat == MediaCodecInfo.CodecCapabilities.COLOR_FormatYUV420Flexible) {
                             // Yuv420_888
                         } else if (colorFormat == MediaCodecInfo.CodecCapabilities.COLOR_FormatYUV420PackedPlanar) {
@@ -130,10 +133,14 @@ public class VideoGatherer {
                             // 而 yuv420dp 则是 y1y2y5y6 共用 u1v1
                             //这样处理的话颜色核能会有些失真。
                             Yuv420Util.Nv21ToYuv420SP(pixelData.data, dstByte, previewSize.width, previewSize.height);
+                            Log.i(TAG,"Nv21ToYuv420SP=========");
                         } else if (colorFormat == MediaCodecInfo.CodecCapabilities.COLOR_FormatYUV420PackedSemiPlanar) {
                         } else {
+                            Log.i(TAG,"不变=========");
                             System.arraycopy(pixelData.data, 0, dstByte, 0, pixelData.data.length);
                         }
+
+                        //Yuv420Util.Yuv420SPRotate_90(dstByte,rotationByte,previewSize.width, previewSize.height);
 
                         if (mCallback != null) {
                             mCallback.onReceive(dstByte, colorFormat);
@@ -278,12 +285,13 @@ public class VideoGatherer {
             result = (info.orientation - degrees + 360) % 360;
         }
         camera.setDisplayOrientation(result);
+        Log.i(TAG,"偏转了======="+result);
     }
 
-    private void openCamera() {
+    private void openCamera(int cameraType) {
         if (mCamera == null) {
             try {
-                mCamera = Camera.open();
+                mCamera = Camera.open(cameraType);
             } catch (Exception e) {
                 e.printStackTrace();
                 throw new RuntimeException("打开摄像头失败", e);
