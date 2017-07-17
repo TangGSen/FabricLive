@@ -125,9 +125,9 @@ public class VideoGatherer {
                         // 处理
                         if (colorFormat == MediaCodecInfo.CodecCapabilities.COLOR_FormatYUV420SemiPlanar) {
 
-                            //Yuv420Jni.nv21ToYuv420spRotate90(pixelData.data,dstByte,previewSize.width, previewSize.height,previewSize.width, previewSize.height);
+
                             Yuv420Jni.Nv21ToYuv420SP(pixelData.data, dstByte, previewSize.width, previewSize.height);
-                            //Yuv420Util.Nv21ToYuv420SPAnd_Rotate(pixelData.data, dstByte, previewSize.width, previewSize.height,previewSize.height,previewSize.width);
+
                             Log.i(TAG,"Nv21ToYuv420SP=========");
                         } else if (colorFormat == MediaCodecInfo.CodecCapabilities.COLOR_FormatYUV420Planar) {
                             Yuv420Jni.Nv21ToI420(pixelData.data, dstByte, previewSize.width, previewSize.height);
@@ -159,7 +159,6 @@ public class VideoGatherer {
                             Yuv420Jni.Yuv420SPRotate270(dstByte,rotateByte,previewSize.width,previewSize.height);
                         }
 
-                        ///Yuv420Jni.mirror(rotateByte,previewSize.width,previewSize.height);
                         if (mCallback != null) {
                             mCallback.onReceive(rotateByte, colorFormat);
                         }
