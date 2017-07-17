@@ -34,6 +34,7 @@ public class VideoGatherer {
     private Thread workThread;
     private boolean loop;
     private Callback mCallback;
+    private int cameraId=0;
 
     public static VideoGatherer newInstance(Config config) {
         return new VideoGatherer(config);
@@ -88,7 +89,8 @@ public class VideoGatherer {
 
         openCamera(cameraType);
         setCameraParameters();
-        setCameraDisplayOrientation(act, Camera.CameraInfo.CAMERA_FACING_FRONT, mCamera);
+        setCameraDisplayOrientation(act, cameraType, mCamera);
+        cameraId = cameraType;
         try {
             mCamera.setPreviewDisplay(holder);
         } catch (IOException e) {
@@ -143,7 +145,16 @@ public class VideoGatherer {
 
                         byte[] rotateByte = new byte[calculateFrameSize(ImageFormat.NV21)];
 
-                        Yuv420Util.Yuv420SPRotate_90(dstByte,rotateByte,previewSize.width,previewSize.height);
+
+
+                        if (cameraId == Camera.CameraInfo.CAMERA_FACING_FRONT) {
+                            Log.i(TAG,"前置摄像头=========");
+                            Yuv420Util.Yuv420SPRotate_90(dstByte, rotateByte, previewSize.width, previewSize.height);
+                        } else {
+                            Log.i(TAG,"后置摄像头=========");
+                            Yuv420Util.YUV420spRotateNegative90(dstByte,rotateByte,previewSize.width,previewSize.height);
+                        }
+
 
                         if (mCallback != null) {
                             mCallback.onReceive(rotateByte, colorFormat);

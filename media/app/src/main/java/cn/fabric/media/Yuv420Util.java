@@ -131,4 +131,50 @@ public class Yuv420Util {
     }
 
 
+    /**
+     * 逆时针旋转90度
+     * @param src
+     * @param dst
+     * @param srcWidth
+     * @param srcHeight
+     */
+    public static void YUV420spRotateNegative90(byte[] src, byte[] dst,int srcWidth,int srcHeight)
+    {
+
+
+        int nWidth = 0, nHeight = 0;
+        int wh = 0;
+        int uvHeight = 0;
+        if(srcWidth != nWidth || srcHeight != nHeight)
+        {
+            nWidth = srcWidth;
+            nHeight = srcHeight;
+            wh = srcWidth * srcHeight;
+            uvHeight = srcHeight >> 1;//uvHeight = height / 2
+        }
+
+        //旋转Y
+        int k = 0;
+        for(int i = 0; i < srcWidth; i++) {
+            int nPos = 0;
+            for(int j = 0; j < srcHeight; j++) {
+                dst[k] = src[nPos + i];
+                k++;
+                nPos += srcWidth;
+            }
+        }
+
+        for(int i = 0; i < srcWidth; i+=2){
+            int nPos = wh;
+            for(int j = 0; j < uvHeight; j++) {
+                dst[k] = src[nPos + i];
+                dst[k + 1] = src[nPos + i + 1];
+                k += 2;
+                nPos += srcWidth;
+            }
+        }
+
+
+    }
+
 }
