@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/activity_start"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    >
+    <EditText
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/rtmpUrl"
+        android:text="rtmp://192.168.0.107/live/test"/>
+    <RadioGroup android:id="@+id/radioGroupMode" android:contentDescription="清晰程度" android:layout_width="wrap_content" android:layout_height="wrap_content">
+        <RadioButton android:layout_width="wrap_content" android:layout_height="wrap_content"
+            android:id="@+id/radioHDMode" android:text="高清" android:checked="true" ></RadioButton>
+        <RadioButton android:layout_width="wrap_content"
+            android:layout_height="wrap_content" android:id="@+id/radioSmoothMode" android:text="标清"></RadioButton>
+    </RadioGroup>
+    <Button
+        android:id="@+id/btnPreCamera"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="前置镜头开播"
+        />
+    <Button
+        android:id="@+id/btnAfterCamera"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="后置镜头开播"
+        />
+
+</LinearLayout>
