@@ -71,7 +71,7 @@ public class Config {
         private int audioChannel = AudioFormat.CHANNEL_CONFIGURATION_STEREO;
 
         private int SmoothBitrate = 500 * 1024; //500k
-        private int HdBitrate = 1200 * 1024; //1200k
+        private int HdBitrate = 1200 * 1024 * 2; //1200k
 
         private int bitrate = SmoothBitrate ;
 

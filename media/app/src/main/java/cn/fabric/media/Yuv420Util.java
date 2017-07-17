@@ -89,41 +89,41 @@ public class Yuv420Util {
      * 翻转90度
      * @param src
      * @param dst
-     * @param srcWidth
+     * @param width
      * @param height
      */
-    public static void Yuv420SPRotate_90(byte[] src, byte[] dst,int srcWidth,int height)
+    public static void Yuv420SPRotate_90(byte[] src, byte[] dst,int width,int height)
     {
         int nWidth = 0, nHeight = 0;
         int wh = 0;
         int uvHeight = 0;
-        if(srcWidth != nWidth || height != nHeight)
+        if(width != nWidth || height != nHeight)
         {
-            nWidth = srcWidth;
+            nWidth = width;
             nHeight = height;
-            wh = srcWidth * height;
+            wh = width * height;
             uvHeight = height >> 1;//uvHeight = height / 2
         }
 
         //旋转Y
         int k = 0;
-        for(int i = 0; i < srcWidth; i++){
-            int nPos = srcWidth - 1;
+        for(int i = 0; i < width; i++){
+            int nPos = width - 1;
             for(int j = 0; j < height; j++)
             {
                 dst[k] = src[nPos - i];
                 k++;
-                nPos += srcWidth;
+                nPos += width;
             }
         }
 
-        for(int i = 0; i < srcWidth; i+=2){
-            int nPos = wh + srcWidth - 1;
+        for(int i = 0; i < width; i+=2){
+            int nPos = wh + width - 1;
             for(int j = 0; j < uvHeight; j++) {
                 dst[k] = src[nPos - i - 1];
                 dst[k + 1] = src[nPos - i];
                 k += 2;
-                nPos += srcWidth;
+                nPos += width;
             }
         }
 

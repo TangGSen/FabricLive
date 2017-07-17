@@ -39,3 +39,12 @@ target_link_libraries(
                        ${log-lib}
                        speex)
 
+add_library(
+             yuv-lib
+             SHARED
+             src/main/cpp/Yuv420_Jni.cpp)
+
+
+target_link_libraries(
+                       yuv-lib
+                       ${log-lib})

@@ -13,9 +13,12 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.concurrent.LinkedBlockingQueue;
 
+import cn.fabric.media.jni.Yuv420Jni;
+
 import static android.hardware.Camera.Parameters.FOCUS_MODE_AUTO;
 import static android.hardware.Camera.Parameters.PREVIEW_FPS_MAX_INDEX;
 import static android.hardware.Camera.Parameters.PREVIEW_FPS_MIN_INDEX;
+import static android.view.View.Y;
 
 /**
  * Created by blueberry on 3/6/2017.
@@ -122,11 +125,12 @@ public class VideoGatherer {
                         // 处理
                         if (colorFormat == MediaCodecInfo.CodecCapabilities.COLOR_FormatYUV420SemiPlanar) {
 
-                            Yuv420Util.Nv21ToYuv420SP(pixelData.data, dstByte, previewSize.width, previewSize.height);
+                            //Yuv420Jni.nv21ToYuv420spRotate90(pixelData.data,dstByte,previewSize.width, previewSize.height,previewSize.width, previewSize.height);
+                            Yuv420Jni.Nv21ToYuv420SP(pixelData.data, dstByte, previewSize.width, previewSize.height);
                             //Yuv420Util.Nv21ToYuv420SPAnd_Rotate(pixelData.data, dstByte, previewSize.width, previewSize.height,previewSize.height,previewSize.width);
                             Log.i(TAG,"Nv21ToYuv420SP=========");
                         } else if (colorFormat == MediaCodecInfo.CodecCapabilities.COLOR_FormatYUV420Planar) {
-                            Yuv420Util.Nv21ToI420(pixelData.data, dstByte, previewSize.width, previewSize.height);
+                            Yuv420Jni.Nv21ToI420(pixelData.data, dstByte, previewSize.width, previewSize.height);
                             Log.i(TAG,"Nv21ToI420=========");
                         } else if (colorFormat == MediaCodecInfo.CodecCapabilities.COLOR_FormatYUV420Flexible) {
                             // Yuv420_888
@@ -135,7 +139,7 @@ public class VideoGatherer {
                             // 区别在于 加入 width = 4的话 y1,y2,y3 ,y4公用 u1v1
                             // 而 yuv420dp 则是 y1y2y5y6 共用 u1v1
                             //这样处理的话颜色核能会有些失真。
-                            Yuv420Util.Nv21ToYuv420SP(pixelData.data, dstByte, previewSize.width, previewSize.height);
+                            Yuv420Jni.Nv21ToYuv420SP(pixelData.data, dstByte, previewSize.width, previewSize.height);
                             Log.i(TAG,"Nv21ToYuv420SP=========");
                         } else if (colorFormat == MediaCodecInfo.CodecCapabilities.COLOR_FormatYUV420PackedSemiPlanar) {
                         } else {
@@ -148,14 +152,14 @@ public class VideoGatherer {
 
 
                         if (cameraId == Camera.CameraInfo.CAMERA_FACING_FRONT) {
-                            Log.i(TAG,"前置摄像头=========");
-                            Yuv420Util.Yuv420SPRotate_90(dstByte, rotateByte, previewSize.width, previewSize.height);
+                            Log.i(TAG,"前置摄像头========");
+                            Yuv420Jni.Yuv420SPRotate90(dstByte, rotateByte, previewSize.width, previewSize.height);
                         } else {
                             Log.i(TAG,"后置摄像头=========");
-                            Yuv420Util.YUV420spRotateNegative90(dstByte,rotateByte,previewSize.width,previewSize.height);
+                            Yuv420Jni.Yuv420SPRotate270(dstByte,rotateByte,previewSize.width,previewSize.height);
                         }
 
-
+                        ///Yuv420Jni.mirror(rotateByte,previewSize.width,previewSize.height);
                         if (mCallback != null) {
                             mCallback.onReceive(rotateByte, colorFormat);
                         }
