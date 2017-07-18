@@ -117,39 +117,40 @@ JNIEXPORT void JNICALL Java_cn_fabric_media_jni_Yuv420Jni_Yuv420SPRotate90
 
 
 JNIEXPORT void JNICALL Java_cn_fabric_media_jni_Yuv420Jni_YUV420spRotateNegative90
-        (JNIEnv *env, jclass cl, jbyteArray src, jbyteArray dst, jint width, jint height) {
+        (JNIEnv *env, jclass cl, jbyteArray src, jbyteArray dst, jint srcWidth, jint srcHeight) {
+
     jbyte *srcFrame = env->GetByteArrayElements(src, NULL);
     jbyte *dstFrame = env->GetByteArrayElements(dst, NULL);
 
     int nWidth = 0, nHeight = 0;
     int wh = 0;
     int uvHeight = 0;
-    if(width != nWidth || height != nHeight)
+    if(srcWidth != nWidth || srcHeight != nHeight)
     {
-        nWidth = width;
-        nHeight = height;
-        wh = width * height;
-        uvHeight = height >> 1;//uvHeight = height / 2
+        nWidth = srcWidth;
+        nHeight = srcHeight;
+        wh = srcWidth * srcHeight;
+        uvHeight = srcHeight >> 1;//uvHeight = height / 2
     }
 
     //旋转Y
     int k = 0;
-    for(int i = 0; i < width; i++) {
+    for(int i = 0; i < srcWidth; i++) {
         int nPos = 0;
-        for(int j = 0; j < height; j++) {
+        for(int j = 0; j < srcHeight; j++) {
             dst[k] = src[nPos + i];
             k++;
-            nPos += width;
+            nPos += srcWidth;
         }
     }
 
-    for(int i = 0; i < width; i+=2){
+    for(int i = 0; i < srcWidth; i+=2){
         int nPos = wh;
         for(int j = 0; j < uvHeight; j++) {
             dst[k] = src[nPos + i];
             dst[k + 1] = src[nPos + i + 1];
             k += 2;
-            nPos += width;
+            nPos += srcWidth;
         }
     }
 
@@ -187,6 +188,8 @@ JNIEXPORT void JNICALL Java_cn_fabric_media_jni_Yuv420Jni_nv21ToYuv420spRotate90
     for (i = deleteW; i < nWidth- deleteW; i += 2)
         for (j = nHeight / 2 * 3 -deleteH / 2; j > nHeight + deleteH / 2; j--)
         dstFrame[index++]= srcFrame[(j - 1) * nWidth + i];
+
+
     env->ReleaseByteArrayElements(src, srcFrame, JNI_OK);
     env->ReleaseByteArrayElements(dst, dstFrame, JNI_OK);
 }
