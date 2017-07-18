@@ -41,7 +41,7 @@ public class Yuv420Jni {
     public native static void Nv21ToI420(byte[] data, byte[] dstData, int w, int h);
 
     /**
-     * yuv420sp旋转90度
+     * yuv420sp顺时针旋转90度
      * @param data
      * @param dstData
      * @param w
@@ -50,14 +50,17 @@ public class Yuv420Jni {
     public native static void Yuv420SPRotate90(byte[] data, byte[] dstData, int w, int h);
 
 
+
+
+
     /**
-     * yuv420sp旋转270度
+     * 逆时针旋转90度
      * @param data
      * @param dstData
      * @param w
      * @param h
      */
-    public native static void Yuv420SPRotate270(byte[] data, byte[] dstData, int w, int h);
+    public native static void  YUV420spRotateNegative90(byte[] data, byte[] dstData, int w, int h);
 
     /**
      * nv21转yuv420sp,

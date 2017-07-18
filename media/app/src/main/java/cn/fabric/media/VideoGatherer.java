@@ -156,7 +156,7 @@ public class VideoGatherer {
                             Yuv420Jni.Yuv420SPRotate90(dstByte, rotateByte, previewSize.width, previewSize.height);
                         } else {
                             Log.i(TAG,"后置摄像头=========");
-                            Yuv420Jni.Yuv420SPRotate270(dstByte,rotateByte,previewSize.width,previewSize.height);
+                            Yuv420Jni.YUV420spRotateNegative90(dstByte,rotateByte,previewSize.width,previewSize.height);
                         }
 
                         if (mCallback != null) {

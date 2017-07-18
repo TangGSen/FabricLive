@@ -116,34 +116,46 @@ JNIEXPORT void JNICALL Java_cn_fabric_media_jni_Yuv420Jni_Yuv420SPRotate90
 }
 
 
-JNIEXPORT void JNICALL Java_cn_fabric_media_jni_Yuv420Jni_Yuv420SPRotate270
+JNIEXPORT void JNICALL Java_cn_fabric_media_jni_Yuv420Jni_YUV420spRotateNegative90
         (JNIEnv *env, jclass cl, jbyteArray src, jbyteArray dst, jint width, jint height) {
     jbyte *srcFrame = env->GetByteArrayElements(src, NULL);
     jbyte *dstFrame = env->GetByteArrayElements(dst, NULL);
-    int n = 0;
-    int uvHeight = height >> 1;
-    int wh = width * height;
-    //copy y
-    for(int j = width - 1; j >= 0; j--)
+
+    int nWidth = 0, nHeight = 0;
+    int wh = 0;
+    int uvHeight = 0;
+    if(width != nWidth || height != nHeight)
     {
-        for(int i = 0; i < height;i++)
-        {
-            dstFrame[n++] = srcFrame[width * i + j];
+        nWidth = width;
+        nHeight = height;
+        wh = width * height;
+        uvHeight = height >> 1;//uvHeight = height / 2
+    }
+
+    //旋转Y
+    int k = 0;
+    for(int i = 0; i < width; i++) {
+        int nPos = 0;
+        for(int j = 0; j < height; j++) {
+            dst[k] = src[nPos + i];
+            k++;
+            nPos += width;
         }
     }
 
-    for(int j = width - 1; j > 0;j -= 2)
-    {
-        for(int i = 0; i < uvHeight; i++)
-        {
-            dstFrame[n++] = srcFrame[wh + width * i + j - 1];
-            dstFrame[n++] = srcFrame[wh + width * i + j];
+    for(int i = 0; i < width; i+=2){
+        int nPos = wh;
+        for(int j = 0; j < uvHeight; j++) {
+            dst[k] = src[nPos + i];
+            dst[k + 1] = src[nPos + i + 1];
+            k += 2;
+            nPos += width;
         }
     }
+
     env->ReleaseByteArrayElements(src, srcFrame, JNI_OK);
     env->ReleaseByteArrayElements(dst, dstFrame, JNI_OK);
 }
-
 
 /*
  * Class:     cn_fabric_media_jni_Yuv420Jni
