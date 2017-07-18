@@ -27,7 +27,8 @@ JNIEXPORT void JNICALL Java_cn_fabric_media_jni_Yuv420Jni_Nv21ToYuv420SP
         dstFrame[size + i * 2] = srcFrame[size + i * 2 + 1]; //U
         dstFrame[size + i * 2 + 1] = srcFrame[size + i * 2]; //V
     }
-    env->ReleaseByteArrayElements(dst, dstFrame, JNI_ABORT);
+    env->ReleaseByteArrayElements(src, srcFrame, JNI_OK);
+    env->ReleaseByteArrayElements(dst, dstFrame, JNI_OK);
 }
 
 JNIEXPORT void JNICALL Java_cn_fabric_media_jni_Yuv420Jni_Nv21ToI420
@@ -70,7 +71,8 @@ JNIEXPORT void JNICALL Java_cn_fabric_media_jni_Yuv420Jni_Nv21ToI420
         }
         tempindex+= uWidth;
     }
-    env->ReleaseByteArrayElements(dst, dstFrame, JNI_ABORT);
+    env->ReleaseByteArrayElements(src, srcFrame, JNI_OK);
+    env->ReleaseByteArrayElements(dst, dstFrame, JNI_OK);
 }
 
 
@@ -109,7 +111,8 @@ JNIEXPORT void JNICALL Java_cn_fabric_media_jni_Yuv420Jni_Yuv420SPRotate90
             nPos += width;
         }
     }
-    env->ReleaseByteArrayElements(dst, dstFrame, JNI_ABORT);
+    env->ReleaseByteArrayElements(src, srcFrame, JNI_OK);
+    env->ReleaseByteArrayElements(dst, dstFrame, JNI_OK);
 }
 
 
@@ -137,7 +140,8 @@ JNIEXPORT void JNICALL Java_cn_fabric_media_jni_Yuv420Jni_Yuv420SPRotate270
             dstFrame[n++] = srcFrame[wh + width * i + j];
         }
     }
-    env->ReleaseByteArrayElements(dst, dstFrame, JNI_ABORT);
+    env->ReleaseByteArrayElements(src, srcFrame, JNI_OK);
+    env->ReleaseByteArrayElements(dst, dstFrame, JNI_OK);
 }
 
 
@@ -171,7 +175,8 @@ JNIEXPORT void JNICALL Java_cn_fabric_media_jni_Yuv420Jni_nv21ToYuv420spRotate90
     for (i = deleteW; i < nWidth- deleteW; i += 2)
         for (j = nHeight / 2 * 3 -deleteH / 2; j > nHeight + deleteH / 2; j--)
         dstFrame[index++]= srcFrame[(j - 1) * nWidth + i];
-    env->ReleaseByteArrayElements(dst, dstFrame, JNI_ABORT);
+    env->ReleaseByteArrayElements(src, srcFrame, JNI_OK);
+    env->ReleaseByteArrayElements(dst, dstFrame, JNI_OK);
 }
 
 /*
@@ -208,7 +213,8 @@ JNIEXPORT void JNICALL Java_cn_fabric_media_jni_Yuv420Jni_nv21ToYuv420spRotate27
         for (j = nHeight + deleteH / 2;j < nHeight / 2 * 3 - deleteH / 2; j++)
             dstFrame[index++]= srcFrame[(j) * nWidth + i];
 
-    env->ReleaseByteArrayElements(dst, dstFrame, JNI_ABORT);
+    env->ReleaseByteArrayElements(src, srcFrame, JNI_OK);
+    env->ReleaseByteArrayElements(dst, dstFrame, JNI_OK);
 }
 
 /*
@@ -263,7 +269,8 @@ JNIEXPORT void JNICALL Java_cn_fabric_media_jni_Yuv420Jni_mirror
         }
     }
 
-    env->ReleaseByteArrayElements(src, srcFrame, JNI_ABORT);
+    env->ReleaseByteArrayElements(src, srcFrame, JNI_OK);
+    env->ReleaseByteArrayElements(src, srcFrame, JNI_OK);
 
 }
 
