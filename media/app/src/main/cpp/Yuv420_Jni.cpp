@@ -1,6 +1,7 @@
 
 #include <jni.h>
 #include<string.h>
+#include "libyuv.h"
 #include <android/log.h>
 #define LIBENC_LOGD(...) ((void)__android_log_print(ANDROID_LOG_DEBUG, "libyuv", __VA_ARGS__))
 #define LIBENC_LOGI(...) ((void)__android_log_print(ANDROID_LOG_INFO , "libyuv", __VA_ARGS__))
@@ -12,6 +13,123 @@
 extern "C" {
 #endif
 
+int VideoStreamProcess(unsigned char *Src_data, unsigned char *Dst_data,
+                       int src_width, int src_height,
+                       bool EnableRotate, bool EnableMirror,
+                       unsigned char *Dst_data_mirror, unsigned char *Dst_data_rotate,
+                       int rotatemodel) {
+    if(EnableRotate && Dst_data_rotate==NULL)
+    {
+        LIBENC_LOGE("需要翻转，但是没有传目标数组");
+        return -1;
+    }
+
+    if(EnableMirror && Dst_data_mirror==NULL)
+    {
+        LIBENC_LOGE("需要镜像，但是没有传目标数组");
+        return -1;
+    }
+    //src:NV12 video size
+    int NV12_Size = src_width * src_height * 3 / 2;
+    int NV12_Y_Size = src_width * src_height;
+
+    //dst:YUV420 video size
+    int I420_Size = src_width * src_height * 3 / 2;
+    int I420_Y_Size = src_width * src_height;
+    int I420_U_Size = (src_width >> 1) * (src_height >> 1);
+    int I420_V_Size = I420_U_Size;
+
+    // video format transformation process
+    unsigned char *Y_data_Src = Src_data;
+    unsigned char *UV_data_Src = Src_data + NV12_Y_Size;
+    int src_stride_y = src_width;
+    int src_stride_uv = src_width;
+
+    unsigned char *Y_data_Dst = Dst_data;
+    unsigned char *U_data_Dst = Dst_data + I420_Y_Size;
+    unsigned char *V_data_Dst = Dst_data + I420_Y_Size + I420_U_Size;
+
+    int Dst_Stride_Y = src_width;
+    int Dst_Stride_U = src_width >> 1;
+    int Dst_Stride_V = Dst_Stride_U;
+    //NV12ToI420
+    libyuv::NV21ToI420(Y_data_Src, src_stride_y,
+                       UV_data_Src, src_stride_uv,
+                       Y_data_Dst, Dst_Stride_Y,
+                       U_data_Dst, Dst_Stride_U,
+                       V_data_Dst, Dst_Stride_V,
+                       src_width, src_height);
+
+
+    // video mirror process
+
+
+    if (EnableMirror) {
+        unsigned char *Y_data_Dst_mirror = Dst_data_mirror;
+        unsigned char *U_data_Dst_mirror = Dst_data_mirror + I420_Y_Size;
+        unsigned char *V_data_Dst_mirror = Dst_data_mirror + I420_Y_Size + I420_U_Size;
+        int Dst_Stride_Y_mirror = src_width;
+        int Dst_Stride_U_mirror = src_width >> 1;
+        int Dst_Stride_V_mirror = Dst_Stride_U_mirror;
+        libyuv::I420Mirror(Y_data_Dst, Dst_Stride_Y,
+                           U_data_Dst, Dst_Stride_U,
+                           V_data_Dst, Dst_Stride_V,
+                           Y_data_Dst_mirror, Dst_Stride_Y_mirror,
+                           U_data_Dst_mirror, Dst_Stride_U_mirror,
+                           V_data_Dst_mirror, Dst_Stride_V_mirror,
+                           src_width, src_height);
+    }
+
+    //video rotate process
+    if (EnableRotate) {
+        int Dst_Stride_Y_rotate;
+        int Dst_Stride_U_rotate;
+        int Dst_Stride_V_rotate;
+        unsigned char *Y_data_Dst_rotate = Dst_data_rotate;
+        unsigned char *U_data_Dst_rotate = Dst_data_rotate + I420_Y_Size;
+        unsigned char *V_data_Dst_rotate = Dst_data_rotate + I420_Y_Size + I420_U_Size;
+
+        if (rotatemodel == libyuv::kRotate90 || rotatemodel == libyuv::kRotate270) {
+            Dst_Stride_Y_rotate = src_height;
+            Dst_Stride_U_rotate = src_height >> 1;
+            Dst_Stride_V_rotate = Dst_Stride_U_rotate;
+        }
+        else {
+            Dst_Stride_Y_rotate = src_width;
+            Dst_Stride_U_rotate = src_width >> 1;
+            Dst_Stride_V_rotate = Dst_Stride_U_rotate;
+        }
+
+        if (EnableMirror) {
+            unsigned char *Y_data_Dst_mirror = Dst_data_mirror;
+            unsigned char *U_data_Dst_mirror = Dst_data_mirror + I420_Y_Size;
+            unsigned char *V_data_Dst_mirror = Dst_data_mirror + I420_Y_Size + I420_U_Size;
+            int Dst_Stride_Y_mirror = src_width;
+            int Dst_Stride_U_mirror = src_width >> 1;
+            int Dst_Stride_V_mirror = Dst_Stride_U_mirror;
+
+            libyuv::I420Rotate(Y_data_Dst_mirror, Dst_Stride_Y_mirror,
+                               U_data_Dst_mirror, Dst_Stride_U_mirror,
+                               V_data_Dst_mirror, Dst_Stride_V_mirror,
+                               Y_data_Dst_rotate, Dst_Stride_Y_rotate,
+                               U_data_Dst_rotate, Dst_Stride_U_rotate,
+                               V_data_Dst_rotate, Dst_Stride_V_rotate,
+                               src_width, src_height,
+                               (libyuv::RotationMode) rotatemodel);
+        }
+        else {
+            libyuv::I420Rotate(Y_data_Dst, Dst_Stride_Y,
+                               U_data_Dst, Dst_Stride_U,
+                               V_data_Dst, Dst_Stride_V,
+                               Y_data_Dst_rotate, Dst_Stride_Y_rotate,
+                               U_data_Dst_rotate, Dst_Stride_U_rotate,
+                               V_data_Dst_rotate, Dst_Stride_V_rotate,
+                               src_width, src_height,
+                               (libyuv::RotationMode) rotatemodel);
+        }
+    }
+    return 0;
+}
 
 JNIEXPORT void JNICALL Java_cn_fabric_media_jni_Yuv420Jni_Nv21ToYuv420SP
         (JNIEnv *env, jclass cl, jbyteArray src, jbyteArray dst, jint width, jint height)
@@ -32,45 +150,20 @@ JNIEXPORT void JNICALL Java_cn_fabric_media_jni_Yuv420Jni_Nv21ToYuv420SP
 }
 
 JNIEXPORT void JNICALL Java_cn_fabric_media_jni_Yuv420Jni_Nv21ToI420
-        (JNIEnv *env, jclass cl, jbyteArray src, jbyteArray dst, jint width, jint height)
+        (JNIEnv *env, jclass cl, jbyteArray src, jbyteArray dst, jint src_width, jint src_height)
 {
 
     jbyte *srcFrame = env->GetByteArrayElements(src, NULL);
     jbyte *dstFrame = env->GetByteArrayElements(dst, NULL);
 
-    int size =width*height;
-    int i,j;
-    int uWidth = width/2;
-    int uHeight = width/2;
-    //y
-    memcpy(dstFrame,srcFrame,size);
-    int tempindex = 0 ;
-    int srcindex= 0;
-    //u
-    for(i= 0 ;i <uHeight;i++)
+    int ret = VideoStreamProcess((uint8_t *)srcFrame,(uint8_t *)dstFrame,src_width, src_height,false, false,
+                       NULL,NULL,NULL);
+    if(ret==-1)
     {
-
-
-        for(j = 0;j <uWidth ;j++ )
-        {
-            dstFrame[size+tempindex+j]= srcFrame[size+(srcindex<<1)+1];
-            srcindex++;
-        }
-        tempindex+= uWidth;
+        LIBENC_LOGE("Nv21ToI420转换失败");
+        return;
     }
 
-
-    //v
-    for (i = 0; i < uHeight;i++)
-    {
-
-        for (j = 0; j < uWidth;j++)
-        {
-            dstFrame[size+tempindex + j] = srcFrame[size + (srcindex << 1 )];
-            srcindex++;
-        }
-        tempindex+= uWidth;
-    }
     env->ReleaseByteArrayElements(src, srcFrame, JNI_OK);
     env->ReleaseByteArrayElements(dst, dstFrame, JNI_OK);
 }
